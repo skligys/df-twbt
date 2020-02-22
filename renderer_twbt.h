@@ -6,8 +6,8 @@
 // This is from g_src/renderer_opengl.hpp
 struct _renderer_opengl : public df::renderer
 {
-    void *sdlscreen;
-    int dispx, dispy;
+    void *window, *renderer, *gl_context;
+    int dispx, dispy, window_x, window_y;
     float *vertexes, *fg, *bg, *tex;
     int zoom_steps, forced_steps;
     int natural_w, natural_h;
