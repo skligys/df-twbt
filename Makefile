@@ -1,8 +1,8 @@
-DFHACKVER ?= 0.44.12-r2
+DFHACKVER ?= 0.44.12-r3
 
-DFVERNUM = `echo $(DFHACKVER) | sed -e s/-.*// -e s/\\\\.//g`
+DFVERNUM = $(shell echo $(DFHACKVER) | sed -e s/-.*// -e s/\\.//g)
 
-TWBT_VER ?= "6.xx"
+TWBT_VER ?= "6.61-sk"
 
 DF ?= /Users/vit/Downloads/df_44_12_osx
 DH ?= /Users/vit/Downloads/buildagent/workspace/root/dfhack/0.44
