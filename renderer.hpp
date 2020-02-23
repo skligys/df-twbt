@@ -757,12 +757,17 @@ void renderer_cool::zoom(df::zoom_commands cmd)
 
 extern "C" {
     uint8_t SDL_GetMouseState(int *x, int *y);
+    uint32_t SDL_GetWindowFlags(void *window);
 }
+const int SDL_WINDOW_MOUSE_FOCUS = 0x00000400;
 
 bool renderer_cool::get_mouse_coords(int32_t *x, int32_t *y)
 {
     if (!screen_map_type)
         return get_mouse_coords_old(x, y);
+
+    bool has_mouse_focus = (SDL_GetWindowFlags(window) & SDL_WINDOW_MOUSE_FOCUS) != 0;
+    if (!has_mouse_focus) return false;
 
     int mouse_x, mouse_y;
     SDL_GetMouseState(&mouse_x, &mouse_y);    
