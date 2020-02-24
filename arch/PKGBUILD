@@ -1,0 +1,61 @@
+# Maintainer: Skirmantas Kligys ("wookietreiber") <Skirmantas.Kligys@gmail.com>
+# Modified from: https://aur.archlinux.org/packages/dfhack/
+pkgname=dfhack-twbt-sk
+pkgver=0.47.03_beta1
+pkgrel=1
+pkgdesc="memory hacking library for Dwarf Fortress and a set of tools that use it"
+arch=('x86_64' 'i686')
+url="https://dfhack.readthedocs.io/en/stable/"
+license=('custom')
+depends=("dwarffortress-sk=${pkgver%%_*}" lua protobuf libpng12 libxrandr libjpeg6 freetype2 libglvnd libxcursor libxinerama)
+makedepends=('cmake' 'git' 'python-sphinx' 'perl-xml-libxml' 'perl-xml-libxslt')
+
+source=(dfhack::git+https://github.com/skligys/dfhack#tag="${pkgver//_/-}"
+        twbt::git+https://github.com/skligys/df-twbt#tag="${pkgver//_/-}"
+        dfhack-sk.sh
+        dfhack-run-sk.sh)
+
+md5sums=('SKIP'
+         'SKIP'
+         '0fefab5f19d5602944a54b62889eab58'
+         '994a9548c9d535a747b46a6875b7bc9d')
+
+prepare() {
+  cd "$srcdir"/dfhack || exit 1
+
+  git remote set-url origin https://github.com/skligys/dfhack
+  git submodule sync
+  git submodule update --init
+}
+
+build() {
+  cd "$srcdir"/dfhack/build || exit 1
+
+  cmake \
+    -DCMAKE_INSTALL_PREFIX=/opt/dwarffortress-sk \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DBUILD_DOCS=ON \
+    -DBUILD_STONESENSE=ON \
+    -DDFHACK_BUILD_ARCH=64 \
+    ..
+
+  make
+
+  cd "$srcdir"/twbt || exit 1
+  DH="$srcdir"/dfhack make
+}
+
+package() {
+  cd "$srcdir"/dfhack/build || exit 1
+
+  # shellcheck disable=2154
+  make DESTDIR="$pkgdir" install
+
+  install -Dm755 "$srcdir"/dfhack-sk.sh     "$pkgdir"/usr/bin/dfhack-sk
+  install -Dm755 "$srcdir"/dfhack-run-sk.sh "$pkgdir"/usr/bin/dfhack-run-sk
+
+  install -Dm644 ../LICENSE.rst "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
+
+  cd "$srcdir"/twbt || exit 1
+  DF=$pkgdir/opt/dwarffortress-sk make inst
+}
