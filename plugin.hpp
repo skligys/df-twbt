@@ -4,7 +4,7 @@ DFhackCExport command_result plugin_init ( color_ostream &out, vector <PluginCom
 {
     out2 = &out;
 
-    *out2 << "TWBT: version " << TWBT_VER << std::endl;
+    *out2 << "DFHack: version " << DFHACK_VERSION << ", TWBT: version " << TWBT_VER << std::endl;
 
     int mode = get_mode();
     if (!mode)
